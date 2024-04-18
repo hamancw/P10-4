@@ -1,12 +1,27 @@
 #include <iostream>
+#include <string>
+#include <cctype>
+
 using namespace std;
 
-bool isCardValid(int digits[], int size) {
+bool isNumeric(string s) {
+    for (char c : s) {
+        if (!isdigit(c))
+            return false;
+    }
+    return true;
+}
+
+bool isCorrectLength(string s) {
+    return (s.length() == 16);
+}
+
+bool isCardValid(string cardNumber) {
     int sum = 0;
     bool doubleDigit = false;
 
-    for (int i = size - 1; i >= 0; i--) {
-        int digit = digits[i];
+    for (int i = cardNumber.length() - 1; i >= 0; i--) {
+        int digit = cardNumber[i] - '0';
 
         if (doubleDigit) {
             digit *= 2;
@@ -22,34 +37,30 @@ bool isCardValid(int digits[], int size) {
 }
 
 int main() {
-    char input[9];
+    string input;
 
     while (true) {
-        cout << "Enter 8-digit credit card # or Q to quit: ";
-        cin.getline(input, 9);
+        cout << "Enter 16-digit credit card # or Q to quit: ";
+        getline(cin, input);
 
-        if (input[0] == 'Q' || input[0] == 'q')
+        if (input == "Q" || input == "q")
             break;
 
-        int digits[8];
-        bool valid = true;
-
-        for (int i = 0; i < 8; i++) {
-            if (isdigit(input[i]))
-                digits[i] = input[i] - '0';
-            else {
-                cout << "Invalid input. Please enter 8 digits.\n";
-                valid = false;
-                break;
-            }
+        if (!isNumeric(input)) {
+            cout << "Error - card number must contain only digits.\n";
+            continue;
         }
 
-        if (valid) {
-            bool result = isCardValid(digits, 8);
-            if (result)
-                cout << "Card is valid.\n";
-            else
-                cout << "Card is not valid.\n";
+        if (!isCorrectLength(input)) {
+            cout << "Error - card number must contain 16 digits.\n";
+            continue;
         }
+
+        bool result = isCardValid(input);
+
+        if (result)
+            cout << "Card is valid.\n";
+        else
+            cout << "Card is not valid.\n";
     }
 }
